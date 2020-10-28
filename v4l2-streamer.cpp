@@ -108,7 +108,8 @@ int launch_pipeline(
     g_object_set(elements->v4l2src, "device", video_device, NULL);
 
   g_object_set(elements->capsfilter1, "caps", gst_caps_new_simple(
-    "image/jpeg", 
+    "video/x-raw",
+    "format", G_TYPE_STRING, "BGR", 
     "width", G_TYPE_INT, width, 
     "height", G_TYPE_INT, height, 
     "framerate", GST_TYPE_FRACTION, framerate, 1, 
@@ -196,7 +197,7 @@ int main(int argc, char *argv[])
     elements.server->run(8003);
   });
 
-  int ret = launch_pipeline(&elements, NULL, 1280, 720, 30);
+  int ret = launch_pipeline(&elements, "/dev/video0", 160, 120, 9);
   g_print("launch_pipeline returned %d\n", ret);
   th.join();
 
