@@ -68,8 +68,8 @@ int launch_pipeline(
     int height,
     int framerate,
     int bitrate = 0,
-    bool jpegdec_vaapi = true,
-    bool h264enc_vaapi = true,
+    bool jpegdec_vaapi = false,
+    bool h264enc_vaapi = false,
     bool h264parse = true
     )
 {
