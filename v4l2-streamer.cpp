@@ -92,7 +92,7 @@ int launch_pipeline(
   }
 
   elements->queue1 = gst_element_factory_make("queue", NULL);
-   if (!elements->queue1) {
+  if (!elements->queue1) {
     g_printerr("Element queue1 could not be created.\n");
     return 1;
   }
@@ -139,7 +139,13 @@ int launch_pipeline(
     return 1;
   }
 
-  g_object_set(elements->h264enc, "bitrate", bitrate, "keyframe-period", 300, NULL);
+  if (!h264enc_vaapi) {
+    if (bitrate == 0)
+      int _bitrate = 2048;
+    g_object_set(elements->h264enc, "bitrate", _bitrate, "key-int-max", 0, NULL);
+  else {
+    g_object_set(elements->h264enc, "bitrate", bitrate, "keyframe-period", 300, NULL);
+  }
   g_object_set(elements->v4l2src, "do-timestamp", TRUE, NULL);
   
   if (video_device != NULL)
@@ -182,6 +188,7 @@ int launch_pipeline(
 
   gboolean link_ret;
 
+  g_print("Linking elements with h264parse=5s\n", h264parse ? "true":"false"); 
   if (h264parse) {
     gst_bin_add(GST_BIN(elements->pipeline), elements->h264parse);
     link_ret = gst_element_link_many(elements->v4l2src,
