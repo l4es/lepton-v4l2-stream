@@ -144,6 +144,7 @@ int launch_pipeline(
     if (_bitrate == 0)
        _bitrate = 2048;
     g_object_set(elements->h264enc, "bitrate", _bitrate, "key-int-max", 0, NULL);
+  }
   else {
     g_object_set(elements->h264enc, "bitrate", bitrate, "keyframe-period", 300, NULL);
   }
