@@ -140,8 +140,9 @@ int launch_pipeline(
   }
 
   if (!h264enc_vaapi) {
-    if (bitrate == 0)
-      int _bitrate = 2048;
+    int _bitrate = bitrate;
+    if (_bitrate == 0)
+       _bitrate = 2048;
     g_object_set(elements->h264enc, "bitrate", _bitrate, "key-int-max", 0, NULL);
   else {
     g_object_set(elements->h264enc, "bitrate", bitrate, "keyframe-period", 300, NULL);
