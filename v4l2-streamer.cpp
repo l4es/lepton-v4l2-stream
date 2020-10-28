@@ -74,30 +74,68 @@ int launch_pipeline(
     )
 {
   elements->v4l2src = gst_element_factory_make("v4l2src", NULL);
+  if (!elements->v4l2src) {
+    g_printerr("Element v4l2src could not be created.\n");
+    return 1;
+  }
 
   elements->capsfilter1 = gst_element_factory_make("capsfilter", NULL);
+  if (!elements->capsfilter1) {
+    g_printerr("Element capsfilter1 could not be created.\n");
+    return 1;
+  }
 
   elements->jpegdec = gst_element_factory_make((jpegdec_vaapi) ? "vaapijpegdec" : "jpegdec", NULL);
+  if (!elements->jpegdec) {
+    g_printerr("Element jpegdec could not be created.\n");
+    return 1;
+  }
 
   elements->queue1 = gst_element_factory_make("queue", NULL);
+   if (!elements->queue1) {
+    g_printerr("Element queue1 could not be created.\n");
+    return 1;
+  }
 
   elements->h264enc = gst_element_factory_make((h264enc_vaapi) ? "vaapih264enc" : "x264enc", NULL);
+  if (!elements->h264enc) {
+    g_printerr("Element h264enc could not be created.\n");
+    return 1;
+  }
 
   elements->queue2 = gst_element_factory_make("queue", NULL);
+  if (!elements->queue2) {
+    g_printerr("Element queue2 could not be created.\n");
+    return 1;
+  }
 
-  if (h264parse) elements->h264parse = gst_element_factory_make("h264parse", NULL);
+  if (h264parse) {
+    elements->h264parse = gst_element_factory_make("h264parse", NULL);
+  
+    if (!elements->h264parse) {
+      g_printerr("Element h264parse could not be created.\n");
+      return 1;
+    }
+  }
 
   elements->capsfilter2 = gst_element_factory_make("capsfilter", NULL);
+  if (!elements->capsfilter2) {
+    g_printerr("Element capsfilter2 could not be created.\n");
+    return 1;
+  }
 
   elements->appsink = gst_element_factory_make("appsink", NULL);
+  if (!elements->appsink) {
+    g_printerr("Element appsink could not be created.\n");
+    return 1;
+  }
 
   char pipeline_name[32];
   sprintf(pipeline_name, "pipeline%d", elements->id);
   elements->pipeline = gst_pipeline_new(pipeline_name);
 
-  if (!elements->pipeline || !elements->v4l2src || !elements->capsfilter1 || !elements->jpegdec || !elements->queue1 || !elements->h264enc || !elements->queue2 || (h264parse && !elements->h264parse) || !elements->capsfilter2 || !elements->appsink)
-  {
-    g_printerr("Not all elements could be created.\n");
+  if (!elements->pipeline) {
+    g_printerr("Element pipeline%d could not be created.\n", elements->id);
     return 1;
   }
 
@@ -131,16 +169,41 @@ int launch_pipeline(
   
   g_signal_connect(elements->appsink, "new-sample", G_CALLBACK(new_frame), elements);
 
-  gst_bin_add_many(GST_BIN(elements->pipeline), elements->v4l2src, elements->capsfilter1, elements->jpegdec, elements->queue1, elements->h264enc, elements->queue2, elements->capsfilter2, elements->appsink, NULL);
+  gst_bin_add_many(GST_BIN(elements->pipeline),
+                   elements->v4l2src,
+                   elements->capsfilter1,
+                   elements->jpegdec,
+                   elements->queue1,
+                   elements->h264enc,
+                   elements->queue2,
+                   elements->capsfilter2,
+                   elements->appsink,
+                   NULL);
 
   gboolean link_ret;
 
   if (h264parse) {
     gst_bin_add(GST_BIN(elements->pipeline), elements->h264parse);
-    link_ret = gst_element_link_many(elements->v4l2src, elements->capsfilter1, elements->jpegdec, elements->queue1, elements->h264enc, elements->queue2, elements->h264parse, elements->capsfilter2, elements->appsink, NULL);
+    link_ret = gst_element_link_many(elements->v4l2src,
+                                     elements->capsfilter1,
+                                     elements->jpegdec,
+                                     elements->queue1,
+                                     elements->h264enc,
+                                     elements->queue2,
+                                     elements->h264parse,
+                                     elements->capsfilter2,
+                                     elements->appsink,
+                                     NULL);
   }
   else {
-    link_ret = gst_element_link_many(elements->v4l2src, elements->capsfilter1, elements->jpegdec, elements->queue1, elements->h264enc, elements->capsfilter2, elements->appsink, NULL);
+    link_ret = gst_element_link_many(elements->v4l2src,
+                                     elements->capsfilter1,
+                                     elements->jpegdec,
+                                     elements->queue1,
+                                     elements->h264enc,
+                                     elements->capsfilter2,
+                                     elements->appsink,
+                                     NULL);
   }
 
   if (link_ret != TRUE) {
