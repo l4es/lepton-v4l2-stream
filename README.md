@@ -1,6 +1,6 @@
-# V4L2-Stream
+# FLIR-Lepton-V4L2-Stream
 
-Stream V4L2 camera to Web Browser
+Stream FLIR Lepton as V4L2 camera to Web Browser
 
 ## Prerequisites
 
@@ -20,8 +20,8 @@ $ sudo apt install libgstreamer1.0-dev libwebsocketpp-dev pkg-config build-essen
 ## Download & Build
 
 ```
-$ git clone https://github.com/mbyzhang/v4l2-stream.git
-$ cd v4l2-stream
+$ git clone https://github.com/l4es/lepton-v4l2-stream.git
+$ cd lepton-v4l2-stream
 $ make
 ```
 
@@ -30,13 +30,13 @@ $ make
 Start stream server with
 
 ```
-$ ./v4l2-streamer 
+$ ./lepton-v4l2-stream
 ```
 
 and start Web server with
 
 ```
-$ cd v4l2-stream/public
+$ cd <path-to>/lepton-v4l2-stream/public
 $ python3 -m http.server
 ```
 
