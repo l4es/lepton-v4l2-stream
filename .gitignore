@@ -1,4 +1,4 @@
 .vscode/
 *.o
 *.gch
-v4l2-streamer
+lepton_v4l2_stream
